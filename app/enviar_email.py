@@ -1,13 +1,11 @@
-from dotenv import load_dotenv
-import os
 from email.mime.text import MIMEText
+from dotenv import load_dotenv
 import smtplib
+import os
+
 
 def enviar_email(linhas):
-    import smtplib
-    from email.mime.text import MIMEText
-    from dotenv import load_dotenv
-    import os
+    
 
     load_dotenv('credentials.env')
     EMAIL_USUARIO = os.getenv('EMAIL')
