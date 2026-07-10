@@ -1,28 +1,16 @@
 from playwright.sync_api import sync_playwright
-from app.products_select import selecionar_produtos
-from email.mime.text import MIMEText
+from app.selecao_produtos import selecionar_produtos
+from app.acessar_nuuvem import abrir_nuuvem
+from app.enviar_email import enviar_email
 from datetime import datetime
-import smtplib
-from dotenv import load_dotenv
-import os
+
 
 with sync_playwright() as p:
-    load_dotenv('credentials.env')
-    USER_MAIL = os.getenv('EMAIL')
-    USER_PASSWORD = os.getenv('SENHA')
     browser = p.chromium.launch(headless=False)
-    page = browser.new_page()
-    page.goto("https://www.nuuvem.com/br-pt")
-    page.get_by_title("Menu").click()
-    page.get_by_role("link", name=" PC ").click()
-    page.get_by_role("link", name="Ofertas", exact=True).click()
+    pagina = browser.new_page()
+    abrir_nuuvem(pagina=pagina)
 
-    page.wait_for_selector("a[data-default-tracker-product-id-param]")
-    produtos = selecionar_produtos(page)
-
-    for prod in produtos:
-        print(f"{prod['nome']} - R${prod['preco_promocional']} ({prod['desconto']}) até {prod['expira_em']}")
-
+    produtos = selecionar_produtos(pagina)
     dados_filtrados = [
     {
         'nome': jogo['nome'],
@@ -34,8 +22,10 @@ with sync_playwright() as p:
     for jogo in produtos
     ]
     for jogo in dados_filtrados:
-        dt = datetime.fromisoformat(jogo['expira_em'].replace("Z", "+00:00"))
-        jogo['expira_em'] = dt.strftime('%d/%m/%Y %H:%M')
+        if jogo['expira_em']:
+            dt = datetime.fromisoformat(jogo['expira_em'].replace("Z", "+00:00"))
+        else:
+            dt = None 
 
     linhas = []
     for produto in dados_filtrados:
@@ -48,18 +38,9 @@ with sync_playwright() as p:
         )
         linhas.append(linha)  
 
-    corpo_email = "Segue abaixo a lista de produtos filtrados:\n\n" +  "\n".join(linhas)
-    msg = MIMEText(corpo_email, "plain", "utf-8")
-    msg["Subject"] = "Jogos em Promoção - NUUVEM"
-    msg["From"] = USER_MAIL
-    msg["To"] = ""
+    enviar_email(linhas=linhas)
 
 
-    with smtplib.SMTP("smtp.gmail.com", 587) as servidor_email:
-        servidor_email.starttls()
-        servidor_email.login(USER_MAIL, USER_PASSWORD)
-        servidor_email.send_message(msg)
-        servidor_email.quit()
    
 
     
