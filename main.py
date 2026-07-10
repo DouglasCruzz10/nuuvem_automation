@@ -4,17 +4,13 @@ from app.acessar_nuuvem import abrir_nuuvem
 from app.enviar_email import enviar_email
 from datetime import datetime
 
+
 with sync_playwright() as p:
     browser = p.chromium.launch(headless=False)
     pagina = browser.new_page()
-    abrir_nuuvem(pagina)
+    abrir_nuuvem(pagina=pagina)
 
-    pagina.get_by_role("link", name=" PC ").click()
-    pagina.get_by_role("link", name="Ofertas", exact=True).click()
-    pagina.wait_for_selector("a[data-default-tracker-product-id-param]")
-    
     produtos = selecionar_produtos(pagina)
-
     dados_filtrados = [
     {
         'nome': jogo['nome'],
@@ -26,8 +22,10 @@ with sync_playwright() as p:
     for jogo in produtos
     ]
     for jogo in dados_filtrados:
-        dt = datetime.fromisoformat(jogo['expira_em'].replace("Z", "+00:00"))
-        jogo['expira_em'] = dt.strftime('%d/%m/%Y %H:%M')
+        if jogo['expira_em']:
+            dt = datetime.fromisoformat(jogo['expira_em'].replace("Z", "+00:00"))
+        else:
+            dt = None 
 
     linhas = []
     for produto in dados_filtrados:
