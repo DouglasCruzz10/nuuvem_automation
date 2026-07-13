@@ -28,6 +28,8 @@ def enviar_email(linhas):
 
     except smtplib.SMTPAuthenticationError as e:
         error(f"❌ Erro de autenticação ao enviar o email: {e}", e)
+    except smtplib.SMTPRecipientsRefused as e:
+        error(f"❌ Erro: destinatário recusado ou inválido ao enviar o email: {e}", e)
     except smtplib.SMTPException as e:
         error(f"❌ Erro geral no SMTP: {e}", e)
     except Exception as e:
