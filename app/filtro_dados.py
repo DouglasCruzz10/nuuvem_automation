@@ -1,6 +1,13 @@
 from datetime import datetime
 
 def filtrar_dados(produtos):
+    """
+    Função para filtrar os dados dos produtos disponíveis.
+    Args:
+        produtos: Lista de produtos disponíveis.
+    Returns:
+        dados_filtrados: Lista de produtos filtrados com informações relevantes.
+    """
     dados_filtrados = [
         {
             'nome': jogo['nome'],

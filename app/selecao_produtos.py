@@ -3,9 +3,20 @@ from utils.logger import info_log, error
 
 
 def selecionar_produtos(pagina):
+    """
+    Função para selecionar os produtos disponíveis na página da Nuuvem.
+    Args:   
+        pagina: Objeto da página do Playwright.
+    Returns:
+        produtos: Lista de produtos disponíveis com informações relevantes.
+    """
+    # Inicializa a lista de Produtos
     produtos = []
+
     try:
         cards = pagina.query_selector_all("a[data-default-tracker-product-id-param]")
+
+
         for card in cards:
             try:
                 raw_tracking = card.get_attribute("data-default-tracker-product-tracking-data-param")
