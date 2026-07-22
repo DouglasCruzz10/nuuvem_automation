@@ -79,7 +79,7 @@ Ao finalizar a execução da automação, você deve esperar o seguinte fluxo de
 
     E-mail Recebido: A caixa de entrada informada na variável DESTINATARIO receberá uma mensagem formatada contendo a compilação das ofertas coletadas.
 Tabela Esperada:
-![Texto Alternativo](docs\tabela_final.png)
+![Texto Alternativo](./docs/tabela_final.png)
 
 ## 🛠️ Construído com
 
